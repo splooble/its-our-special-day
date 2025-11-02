@@ -1,11 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Love Card 💌</title>
+<style>
+  :root{
+    --pink-1: #ffeef2;
+    --pink-2: #ffd6de;
+    --accent: #ff4d6d;
+  }
+
+  html,body{height:100%;margin:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;overflow:hidden;background:linear-gradient(180deg,var(--pink-1),var(--pink-2));}
+
+  .stage{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:1;overflow:hidden;}
+  .flow-layer{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0.9;}
+  .flow-1{background:
+    radial-gradient(60% 60% at 10% 20%, rgba(255,200,210,0.12), transparent 20%),
+    radial-gradient(50% 50% at 80% 80%, rgba(255,170,190,0.10), transparent 18%),
+    linear-gradient(180deg, rgba(255,236,243,0.35), rgba(255,215,225,0.08));
+    animation: flow1 18s linear infinite; filter: blur(18px) saturate(1.05);}
+  .flow-2{background:
+    radial-gradient(50% 40% at 80% 30%, rgba(255,150,170,0.06), transparent 16%),
+    radial-gradient(40% 40% at 20% 70%, rgba(255,190,205,0.05), transparent 14%),
+    linear-gradient(180deg, rgba(255,245,247,0.12), rgba(255,230,238,0.04));
+    animation: flow2 26s linear infinite; filter: blur(14px) saturate(1.02); opacity:0.95;}
+  @keyframes flow1{0%{transform:translate3d(-6%,-2%,0) scale(1.02);}50%{transform:translate3d(6%,2%,0) scale(1.03);}100%{transform:translate3d(-6%,-2%,0) scale(1.02);}}
+  @keyframes flow2{0%{transform:translate3d(6%,4%,0) scale(1.01);}50%{transform:translate3d(-6%,-4%,0) scale(1.02);}100%{transform:translate3d(6%,4%,0) scale(1.01);}}
+
+  .soft-overlay{position:absolute;inset:0;background:rgba(255,192,203,0.06);z-index:1;pointer-events:none;}
+
+  .envelope-wrap{position:relative;z-index:8;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:auto;}
+
+  /* Bigger, more traditional envelope */
+  .envelope{
+    width:560px;max-width:92vw;height:380px;
+    background:linear-gradient(180deg,#ffd1db,#ffb6c1);
+    border-radius:12px;position:relative;
+    box-shadow:0 18px 40px rgba(0,0,0,0.12);
+    transform-origin:center;cursor:pointer;transition:transform .45s cubic-bezier(.2,.9,.3,1);
+    display:block;animation:idleBob 3s ease-in-out infinite; perspective:1200px;
+  }
+
+  /* TRADITIONAL FLAP: triangle pointing DOWN (peak toward center) */
+  .flap{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:58%;                 /* controls how large the flap is */
+    z-index:5;
+    transform-origin: top center; /* hinge along the top edge of the envelope */
+    backface-visibility:hidden;
+    transform-style:preserve-3d;
+    transition: transform .6s cubic-bezier(.2,.9,.3,1);
+    /* triangle pointing DOWN: base along top edge, point at bottom center */
+    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+    background:linear-gradient(180deg,#ff98ab,#ff7ea0);
+    box-shadow: inset 0 -6px 10px rgba(0,0,0,0.04);
+  }
+
+  /* flip flap open (rotates up/back from the top edge) */
+  .envelope.open .flap{
+    transform: rotateX(-180deg) translateY(-2%);
+    /* negative rotate flips the flap backward so its underside faces up */
+  }
+
+  .seal{
+    position:absolute;width:96px;height:96px;top:48%;left:50%;
+    transform:translate(-50%,-50%) scale(1.06);
+    display:flex;align-items:center;justify-content:center;font-size:48px;z-index:7;
+    transition:transform .45s ease,opacity .35s ease;pointer-events:none;
+    filter:drop-shadow(0 6px 12px rgba(0,0,0,0.14));
+  }
+  .envelope.open .seal{ opacity:0; transform:translate(-50%,-50%) scale(0.2); }
+
+  /* card starts translated DOWN and rises with delay/bounce */
+  .card{
+    position:absolute;left:50%;top:12%;
+    transform:translateX(-50%) translateY(120%);
+    width:460px;max-width:86vw;height:300px;background:white;border-radius:12px;padding:28px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.12);opacity:0;z-index:9;
+  }
+  .envelope.open .card{
+    animation: cardRise 900ms cubic-bezier(.22,.9,.32,1) 280ms both;
+  }
+  @keyframes cardRise{
+    0%{ transform:translateX(-50%) translateY(120%) scale(.995); opacity:0; }
+    60%{ transform:translateX(-50%) translateY(-8%) scale(1.03); opacity:1; }
+    100%{ transform:translateX(-50%) translateY(0%) scale(1); opacity:1; }
+  }
+
+  h2{margin:6px 0 8px;color:var(--accent);font-size:22px;}
+  .card p{margin:8px 0;color:#555;font-size:15px;line-height:1.45;}
+
+  .open-text{color:var(--accent);font-weight:700;font-size:20px;z-index:10;animation:textBounce 2s ease-in-out infinite;user-select:none;}
+  @keyframes textBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .open-text.hide{opacity:0;transform:scale(.85);transition:all .35s ease;pointer-events:none;}
+
+  @keyframes idleBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+  .hearts-layer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:visible;}
+  .floating-heart{position:absolute;bottom:-40px;pointer-events:none;will-change:transform,opacity;z-index:4;user-select:none;text-shadow:0 2px 6px rgba(255,80,100,0.08);}
+  @keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:1}60%{opacity:0.9}100%{transform:translateY(-120vh) scale(1.2);opacity:0}}
+
+  .vignette{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%, rgba(255,255,255,0.0) 0%, rgba(0,0,0,0.02) 60%, rgba(0,0,0,0.06) 100%);pointer-events:none;z-index:12;}
+
+  @media (max-width:520px){
+    .envelope{width:92vw;height:320px}
+    .card{width:86vw;height:260px}
+    .seal{width:78px;height:78px;font-size:38px}
+  }
+</style>
 </head>
 <body>
-    <h1>Hello World!</h1>
+  <div class="stage">
+    <div class="flow-layer flow-1" aria-hidden="true"></div>
+    <div class="flow-layer flow-2" aria-hidden="true"></div>
+    <div class="soft-overlay" aria-hidden="true"></div>
+    <div class="hearts-layer" id="heartsLayer" aria-hidden="true"></div>
+
+    <div class="envelope-wrap">
+      <div class="envelope" id="envelope" role="button" aria-label="Open love letter" tabindex="0">
+        <!-- flap now points DOWN -->
+        <div class="flap" aria-hidden="true"></div>
+
+        <div class="seal" aria-hidden="true">❤️</div>
+
+        <div class="card" id="card">
+          <h2>Hi, Bebe 💖</h2>
+          <p>You make every day brighter, and my heart feels full because of you.</p>
+          <p>On our special day, my only wish is to continue making you happy.</p>
+          <p>Remember, I'm always here for you, through thick and thin. Together, we can get through anything.</p>
+          <p>When things get hard, just take a deep breath and know that you are loved.</p>
+          <p>I love you, Bebe! 💗</p>    
+          <p style="margin-top:12px;font-style:italic;color:#7a7a7a;font-size:13px;">— Yours always, Jron 💌</p>
+        </div>
+      </div>
+
+      <div class="open-text" id="openText">Open Me! 💕</div>
+    </div>
+
+    <div class="vignette" aria-hidden="true"></div>
+  </div>
+
+<script>
+  const envelope = document.getElementById('envelope');
+  const openText = document.getElementById('openText');
+  const heartsLayer = document.getElementById('heartsLayer');
+  let heartsRunning = false;
+  let intervals = [];
+
+  envelope.addEventListener('click', () => {
+    envelope.classList.toggle('open');
+    if (envelope.classList.contains('open')) openText.classList.add('hide'); else openText.classList.remove('hide');
+    if (!heartsRunning) { heartsRunning = true; spawnHeartsContinuously(); burstHearts(16); } else { burstHearts(10); }
+  });
+
+  envelope.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); envelope.click(); } });
+
+  function createFloatingHeart({left=null,size=null,duration=null,opacity=null,char='💖'} = {}) {
+    const el = document.createElement('div'); el.className='floating-heart'; el.textContent=char;
+    const stageRect = document.querySelector('.stage').getBoundingClientRect(); const containerWidth = stageRect.width;
+    const randomLeft = (left !== null) ? left : (Math.random() * (containerWidth * 0.86)) + (containerWidth * 0.07);
+    const randomSize = size || (12 + Math.random() * 36); const randomOpacity = typeof opacity === 'number' ? opacity : (0.28 + Math.random() * 0.7);
+    const randomDuration = duration || (3.5 + Math.random() * 5.0);
+    el.style.left = (randomLeft) + 'px'; el.style.bottom = '-40px'; el.style.fontSize = randomSize + 'px';
+    el.style.opacity = randomOpacity; el.style.animation = `floatUp ${randomDuration}s linear forwards`; el._drift = (Math.random() - 0.5) * 90;
+    heartsLayer.appendChild(el);
+    let start = performance.now();
+    function frame(time) { const t = (time - start) / (randomDuration * 1000); if (t >= 1) return; const xOffset = el._drift * Math.sin(t * Math.PI * (0.6 + Math.random()*0.8)); el.style.transform = `translateX(${xOffset}px)`; requestAnimationFrame(frame); }
+    requestAnimationFrame(frame);
+    setTimeout(()=>{ if (el && el.parentNode) el.parentNode.removeChild(el); }, (randomDuration + 0.3) * 1000);
+  }
+
+  function burstHearts(count=12){
+    for(let i=0;i<count;i++){
+      setTimeout(()=>{ const stageRect=document.querySelector('.stage').getBoundingClientRect(); createFloatingHeart({ left:(stageRect.width/2)+(Math.random()*200-100), size:16+Math.random()*40, duration:3.2+Math.random()*3.6, opacity:0.4+Math.random()*0.5 }); }, Math.random()*600);
+    }
+  }
+
+  function spawnHeartsContinuously(){
+    intervals.push(setInterval(()=>{ createFloatingHeart({ size:28+Math.random()*40, duration:7+Math.random()*4, opacity:0.10+Math.random()*0.22 }); }, 1400 + Math.random()*1200));
+    intervals.push(setInterval(()=>{ createFloatingHeart({ size:10+Math.random()*18, duration:3+Math.random()*2.5, opacity:0.28+Math.random()*0.6 }); }, 600 + Math.random()*900));
+    intervals.push(setInterval(()=>{ createFloatingHeart({ size:18+Math.random()*28, duration:4+Math.random()*3, opacity:0.22+Math.random()*0.45 }); }, 1000 + Math.random()*1500));
+  }
+
+  window.addEventListener('load', ()=>{ burstHearts(6); });
+  function stopHearts(){ intervals.forEach(id => clearInterval(id)); intervals=[]; heartsRunning=false; }
+</script>
 </body>
 </html>
