@@ -32,7 +32,6 @@
 
   .envelope-wrap{position:relative;z-index:8;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:auto;}
 
-  /* Bigger, more traditional envelope */
   .envelope{
     width:560px;max-width:92vw;height:380px;
     background:linear-gradient(180deg,#ffd1db,#ffb6c1);
@@ -42,27 +41,23 @@
     display:block;animation:idleBob 3s ease-in-out infinite; perspective:1200px;
   }
 
-  /* TRADITIONAL FLAP: triangle pointing DOWN (peak toward center) */
   .flap{
     position:absolute;
     top:0; left:0;
     width:100%;
-    height:58%;                 /* controls how large the flap is */
+    height:58%;                 
     z-index:5;
-    transform-origin: top center; /* hinge along the top edge of the envelope */
+    transform-origin: top center; 
     backface-visibility:hidden;
     transform-style:preserve-3d;
     transition: transform .6s cubic-bezier(.2,.9,.3,1);
-    /* triangle pointing DOWN: base along top edge, point at bottom center */
     clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
     background:linear-gradient(180deg,#ff98ab,#ff7ea0);
     box-shadow: inset 0 -6px 10px rgba(0,0,0,0.04);
   }
 
-  /* flip flap open (rotates up/back from the top edge) */
   .envelope.open .flap{
     transform: rotateX(-180deg) translateY(-2%);
-    /* negative rotate flips the flap backward so its underside faces up */
   }
 
   .seal{
@@ -74,7 +69,6 @@
   }
   .envelope.open .seal{ opacity:0; transform:translate(-50%,-50%) scale(0.2); }
 
-  /* card starts translated DOWN and rises with delay/bounce */
   .card{
     position:absolute;left:50%;top:12%;
     transform:translateX(-50%) translateY(120%);
@@ -121,7 +115,6 @@
 
     <div class="envelope-wrap">
       <div class="envelope" id="envelope" role="button" aria-label="Open love letter" tabindex="0">
-        <!-- flap now points DOWN -->
         <div class="flap" aria-hidden="true"></div>
 
         <div class="seal" aria-hidden="true">❤️</div>
@@ -167,14 +160,14 @@
     el.style.opacity = randomOpacity; el.style.animation = `floatUp ${randomDuration}s linear forwards`; el._drift = (Math.random() - 0.5) * 90;
     heartsLayer.appendChild(el);
     let start = performance.now();
-    function frame(time) { const t = (time - start) / (randomDuration * 1000); if (t >= 1) return; const xOffset = el._drift * Math.sin(t * Math.PI * (0.6 + Math.random()*0.8)); el.style.transform = `translateX(${xOffset}px)`; requestAnimationFrame(frame); }
+    function frame(time) { const t = (time - start) / (randomDuration * 1000); if (t >= 1) return; const xOffset = el._drift * Math.sin(t * Math.PI * (0.6 + Math.random()*0.8)); el.style.transform = `[...]
     requestAnimationFrame(frame);
     setTimeout(()=>{ if (el && el.parentNode) el.parentNode.removeChild(el); }, (randomDuration + 0.3) * 1000);
   }
 
   function burstHearts(count=12){
     for(let i=0;i<count;i++){
-      setTimeout(()=>{ const stageRect=document.querySelector('.stage').getBoundingClientRect(); createFloatingHeart({ left:(stageRect.width/2)+(Math.random()*200-100), size:16+Math.random()*40, duration:3.2+Math.random()*3.6, opacity:0.4+Math.random()*0.5 }); }, Math.random()*600);
+      setTimeout(()=>{ const stageRect=document.querySelector('.stage').getBoundingClientRect(); createFloatingHeart({ left:(stageRect.width/2)+(Math.random()*200-100), size:16+Math.random()*40, durat[...]
     }
   }
 
